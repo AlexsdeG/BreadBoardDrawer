@@ -4,6 +4,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'resistor',
     name: 'Resistor',
+    category: 'passive',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 72, height: 32, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 4, y: 15, width: 14, height: 2, fill: '#6b7280' },
@@ -23,6 +24,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'ceramic-capacitor',
     name: 'Ceramic Capacitor',
+    category: 'passive',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 60, height: 36, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 6, y: 17, width: 14, height: 2, fill: '#6b7280' },
@@ -40,6 +42,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'electrolytic-capacitor',
     name: 'Electrolytic Cap',
+    category: 'passive',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 64, height: 40, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 6, y: 19, width: 12, height: 2, fill: '#6b7280' },
@@ -57,6 +60,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'led-red',
     name: 'Red LED',
+    category: 'diode-led',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 60, height: 34, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 6, y: 16, width: 13, height: 2, fill: '#6b7280' },
@@ -73,6 +77,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'led-green',
     name: 'Green LED',
+    category: 'diode-led',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 60, height: 34, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 6, y: 16, width: 13, height: 2, fill: '#6b7280' },
@@ -89,6 +94,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'diode',
     name: 'Diode',
+    category: 'diode-led',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 74, height: 30, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 6, y: 14, width: 14, height: 2, fill: '#6b7280' },
@@ -106,6 +112,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'timer-555',
     name: '555 Timer IC',
+    category: 'ic',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 92, height: 58, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 14, y: 14, width: 8, height: 4, fill: '#94a3b8' },
@@ -135,6 +142,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'npn-transistor',
     name: 'NPN Transistor',
+    category: 'transistor',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 64, height: 64, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 30, y: 6, width: 4, height: 12, fill: '#6b7280' },
@@ -155,6 +163,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'push-button',
     name: 'Push Button',
+    category: 'switch',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 70, height: 42, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 16, y: 15, width: 38, height: 14, rx: 6, ry: 6, fill: '#cbd5e1', stroke: '#64748b', strokeWidth: 2 },
@@ -175,6 +184,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'battery-9v',
     name: '9V Battery',
+    category: 'power',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 82, height: 52, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 12, y: 12, width: 58, height: 32, rx: 7, ry: 7, fill: '#475569', stroke: '#1f2937', strokeWidth: 2 },
@@ -193,6 +203,7 @@ export const defaultParts: HardwareComponent[] = [
   {
     id: 'inductor',
     name: 'Inductor',
+    category: 'passive',
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 78, height: 34, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 6, y: 16, width: 12, height: 2, fill: '#6b7280' },
@@ -206,6 +217,81 @@ export const defaultParts: HardwareComponent[] = [
     pins: [
       { id: 'a', x: 6, y: 17, type: 'inout' },
       { id: 'b', x: 72, y: 17, type: 'inout' }
+    ]
+  },
+  {
+    id: 'arduino-uno',
+    name: 'Arduino Uno',
+    category: 'microcontroller',
+    shapes: [
+      { type: 'rect', x: 0, y: 0, width: 138, height: 82, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
+      { type: 'rect', x: 8, y: 10, width: 118, height: 62, rx: 8, ry: 8, fill: '#2563eb', stroke: '#1e3a8a', strokeWidth: 2 },
+      { type: 'rect', x: 14, y: 16, width: 48, height: 10, rx: 2, ry: 2, fill: '#0f172a', stroke: '#1f2937', strokeWidth: 1 },
+      { type: 'rect', x: 66, y: 16, width: 18, height: 12, rx: 2, ry: 2, fill: '#374151', stroke: '#111827', strokeWidth: 1 },
+      { type: 'rect', x: 88, y: 16, width: 32, height: 10, rx: 2, ry: 2, fill: '#e5e7eb', stroke: '#94a3b8', strokeWidth: 1 },
+      { type: 'rect', x: 20, y: 30, width: 36, height: 18, rx: 4, ry: 4, fill: '#1f2937', stroke: '#0f172a', strokeWidth: 1.5 },
+      { type: 'circle', cx: 102, cy: 44, r: 9, fill: '#111827', stroke: '#6b7280', strokeWidth: 2 },
+      { type: 'text', x: 67, y: 58, text: 'UNO', fill: '#dbeafe', fontSize: 12, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' },
+      { type: 'text', x: 67, y: 69, text: 'R3', fill: '#bfdbfe', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 600, textAnchor: 'middle' }
+    ],
+    pins: [
+      { id: 'd0-rx', x: 16, y: 10, type: 'inout' },
+      { id: 'd1-tx', x: 24, y: 10, type: 'inout' },
+      { id: 'd2', x: 32, y: 10, type: 'inout' },
+      { id: 'd3-pwm', x: 40, y: 10, type: 'inout' },
+      { id: 'd4', x: 48, y: 10, type: 'inout' },
+      { id: 'd5-pwm', x: 56, y: 10, type: 'inout' },
+      { id: 'd6-pwm', x: 64, y: 10, type: 'inout' },
+      { id: 'd7', x: 72, y: 10, type: 'inout' },
+      { id: 'd8', x: 80, y: 10, type: 'inout' },
+      { id: 'd9-pwm', x: 88, y: 10, type: 'inout' },
+      { id: 'd10-pwm', x: 96, y: 10, type: 'inout' },
+      { id: 'd11-pwm', x: 104, y: 10, type: 'inout' },
+      { id: 'd12', x: 112, y: 10, type: 'inout' },
+      { id: 'd13-led', x: 120, y: 10, type: 'inout' },
+      { id: 'a0', x: 30, y: 72, type: 'input' },
+      { id: 'a1', x: 42, y: 72, type: 'input' },
+      { id: 'a2', x: 54, y: 72, type: 'input' },
+      { id: 'a3', x: 66, y: 72, type: 'input' },
+      { id: 'a4-sda', x: 78, y: 72, type: 'input' },
+      { id: 'a5-scl', x: 90, y: 72, type: 'input' }
+    ]
+  },
+  {
+    id: 'arduino-nano',
+    name: 'Arduino Nano',
+    category: 'microcontroller',
+    shapes: [
+      { type: 'rect', x: 0, y: 0, width: 102, height: 46, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
+      { type: 'rect', x: 14, y: 6, width: 74, height: 34, rx: 6, ry: 6, fill: '#0891b2', stroke: '#0e7490', strokeWidth: 2 },
+      { type: 'rect', x: 28, y: 12, width: 30, height: 14, rx: 3, ry: 3, fill: '#111827', stroke: '#1f2937', strokeWidth: 1 },
+      { type: 'rect', x: 60, y: 12, width: 14, height: 10, rx: 2, ry: 2, fill: '#e5e7eb', stroke: '#94a3b8', strokeWidth: 1 },
+      { type: 'circle', cx: 76, cy: 30, r: 4, fill: '#22c55e', stroke: '#166534', strokeWidth: 1 },
+      { type: 'text', x: 51, y: 33, text: 'NANO', fill: '#ecfeff', fontSize: 9, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
+    ],
+    pins: [
+      { id: 'd0-rx', x: 14, y: 8, type: 'inout' },
+      { id: 'd1-tx', x: 14, y: 11, type: 'inout' },
+      { id: 'd2', x: 14, y: 14, type: 'inout' },
+      { id: 'd3-pwm', x: 14, y: 17, type: 'inout' },
+      { id: 'd4', x: 14, y: 20, type: 'inout' },
+      { id: 'd5-pwm', x: 14, y: 23, type: 'inout' },
+      { id: 'd6-pwm', x: 14, y: 26, type: 'inout' },
+      { id: 'd7', x: 14, y: 29, type: 'inout' },
+      { id: 'd8', x: 14, y: 32, type: 'inout' },
+      { id: 'd9-pwm', x: 14, y: 35, type: 'inout' },
+      { id: 'd10-pwm', x: 14, y: 38, type: 'inout' },
+      { id: 'd11-pwm', x: 88, y: 8, type: 'inout' },
+      { id: 'd12', x: 88, y: 11, type: 'inout' },
+      { id: 'd13-led', x: 88, y: 14, type: 'inout' },
+      { id: 'a0', x: 88, y: 17, type: 'input' },
+      { id: 'a1', x: 88, y: 20, type: 'input' },
+      { id: 'a2', x: 88, y: 23, type: 'input' },
+      { id: 'a3', x: 88, y: 26, type: 'input' },
+      { id: 'a4-sda', x: 88, y: 29, type: 'input' },
+      { id: 'a5-scl', x: 88, y: 32, type: 'input' },
+      { id: 'a6', x: 88, y: 35, type: 'input' },
+      { id: 'a7', x: 88, y: 38, type: 'input' }
     ]
   }
 ];

@@ -1,25 +1,23 @@
 import { useEffect } from 'react';
 import { useEditorStore } from './store/useEditorStore';
 import EditorCanvas from './components/Canvas/EditorCanvas';
+import { defaultParts } from './config/defaultParts';
 
 export default function App() {
   const addNode = useEditorStore((state) => state.addNode);
   const nodes = useEditorStore((state) => state.nodes);
 
   useEffect(() => {
-    if (nodes.length === 0) {
+    const defaultComponent = defaultParts.find((component) => component.id === 'arduino-uno') ?? defaultParts[0];
+
+    if (nodes.length === 0 && defaultComponent) {
       addNode({
         id: '1',
         type: 'custom',
         position: { x: 100, y: 100 },
         data: {
-          shapes: [
-            { type: 'rect', x: 0, y: 0, width: 60, height: 40, fill: 'white', stroke: 'black', strokeWidth: 2 }
-          ],
-          pins: [
-            { id: 'p1', x: -5, y: 20, type: 'input' },
-            { id: 'p2', x: 65, y: 20, type: 'output' }
-          ]
+          shapes: defaultComponent.shapes,
+          pins: defaultComponent.pins,
         }
       });
     }

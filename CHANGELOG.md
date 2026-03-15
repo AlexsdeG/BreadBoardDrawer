@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.0.14] - 2026-03-15
+- Set startup default component to `Arduino Uno` (with fallback to the first library component).
+- Updated `Arduino Uno` pin definitions to match official counts: 14 digital I/O + 6 analog inputs.
+- Updated `Arduino Nano` pin definitions to match official counts: 22 digital I/O + 8 analog inputs.
+
+## [0.0.13] - 2026-03-15
+- Added component categories (`passive`, `diode-led`, `ic`, `transistor`, `switch`, `power`, `microcontroller`) and wired them into the component schema/library.
+- Upgraded the Add Component modal with category tabs (including `All`) and a top-right search bar that filters within the selected category.
+- Added two new microcontroller components to the default library: `Arduino Uno` and `Arduino Nano`.
+
+## [0.0.12] - 2026-03-15
+- Updated the initial app bootstrap to seed an empty canvas from `defaultParts[0]`, keeping the default node in sync with the component library.
+- The first-load canvas component now uses the resistor's shared `shapes` and `pins` data instead of a hardcoded placeholder node.
+
+## [0.0.11] - 2026-03-15
+- Synced `ComponentModal` previews with the shared component bounds calculator so modal SVGs use the same exact rect, circle, path, text, pin, stroke, and padding math as canvas nodes.
+- Applied the computed preview `viewBox` with centered aspect preservation so larger parts like ICs and batteries stay fully visible inside the modal cards.
+
 ## [0.0.10] - 2026-03-15
 - Added a reusable component bounds calculator that accounts for rects, circles, paths, text, stroke width, pin radius, and padding.
 - Updated `CustomNode` to use exact SVG bounds for its wrapper size, `viewBox`, and handle offsets so selection outlines fit components tightly.

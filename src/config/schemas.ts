@@ -32,6 +32,7 @@ export const PinSchema = z.object({
 export const ComponentSchema = z.object({
   id: z.string(),
   name: z.string(),
+  category: z.enum(['passive', 'diode-led', 'ic', 'transistor', 'switch', 'power', 'microcontroller']).default('passive'),
   shapes: z.array(ShapeSchema),
   pins: z.array(PinSchema),
 });

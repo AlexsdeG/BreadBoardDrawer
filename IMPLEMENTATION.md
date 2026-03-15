@@ -58,16 +58,16 @@ breadboarddrawer/
 
 #### Phase 4: Modal Preview Bounding Box Sync
 
-* [ ] **Step 4.1:** Open `src/components/UI/ComponentModal.tsx`.
-* [ ] **Step 4.2:** Locate the `renderPreview` function.
-* [ ] **Step 4.3:** Replicate the exact min/max bounding box math from Phase 3 into the `renderPreview` function to calculate `minX`, `minY`, `width`, and `height` for the preview SVG.
-* [ ] **Step 4.4:** Apply the calculated `viewBox` to the preview `<svg>` element.
+* [x] **Step 4.1:** Open `src/components/UI/ComponentModal.tsx`.
+* [x] **Step 4.2:** Locate the `renderPreview` function.
+* [x] **Step 4.3:** Replicate the exact min/max bounding box math from Phase 3 into the `renderPreview` function to calculate `minX`, `minY`, `width`, and `height` for the preview SVG.
+* [x] **Step 4.4:** Apply the calculated `viewBox` to the preview `<svg>` element.
 * [ ] **Verification:** Open the application, trigger the Component Modal, and verify that all complex components (like the 9V battery and ICs) render centered and fully visible within their preview boxes without getting cropped.
 
 #### Phase 5: App Initialization Sync
 
-* [ ] **Step 5.1:** Open `src/App.tsx`.
-* [ ] **Step 5.2:** Ensure the initial `useEffect` that populates the canvas uses `defaultParts[0].shapes` and `defaultParts[0].pins` if the canvas is empty.
+* [x] **Step 5.1:** Open `src/App.tsx`.
+* [x] **Step 5.2:** Ensure the initial `useEffect` that populates the canvas uses `defaultParts[0].shapes` and `defaultParts[0].pins` if the canvas is empty.
 * [ ] **Verification:** Clear local storage/state, refresh the app, and verify that the default component (Resistor) loads cleanly onto the canvas.
 
 ---

@@ -1,12 +1,39 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useReactFlow } from 'reactflow';
 import { useEditorStore } from '../../store/useEditorStore';
 import { HardwareComponent } from '../../config/schemas';
 import { X } from 'lucide-react';
+import { getComponentBounds } from '../../utils/componentBounds';
+
+const CATEGORY_LABELS: Record<HardwareComponent['category'], string> = {
+  passive: 'Passive',
+  'diode-led': 'Diode & LED',
+  ic: 'IC',
+  transistor: 'Transistor',
+  switch: 'Switch',
+  power: 'Power',
+  microcontroller: 'Microcontroller',
+};
 
 export default function ComponentModal() {
   const { isComponentModalOpen, setComponentModalOpen, library, addNode } = useEditorStore();
   const { screenToFlowPosition } = useReactFlow();
+  const [selectedCategory, setSelectedCategory] = useState<'all' | HardwareComponent['category']>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const tabs = useMemo(() => {
+    const uniqueCategories = Array.from(new Set(library.map((component) => component.category)));
+    return ['all', ...uniqueCategories] as Array<'all' | HardwareComponent['category']>;
+  }, [library]);
+
+  const filteredComponents = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return library.filter((component) => {
+      const matchesCategory = selectedCategory === 'all' || component.category === selectedCategory;
+      const matchesSearch = term.length === 0 || component.name.toLowerCase().includes(term);
+      return matchesCategory && matchesSearch;
+    });
+  }, [library, searchTerm, selectedCategory]);
 
   if (!isComponentModalOpen) return null;
 
@@ -33,20 +60,16 @@ export default function ComponentModal() {
   };
 
   const renderPreview = (component: HardwareComponent) => {
-    let minX = 0, minY = 0, maxX = 100, maxY = 100;
-    
-    if (component.shapes && component.shapes.length > 0) {
-      minX = Math.min(...component.shapes.map(s => s.x ?? s.cx ?? 0));
-      minY = Math.min(...component.shapes.map(s => s.y ?? s.cy ?? 0));
-      maxX = Math.max(...component.shapes.map(s => (s.x ?? s.cx ?? 0) + (s.width ?? s.r ?? 0)));
-      maxY = Math.max(...component.shapes.map(s => (s.y ?? s.cy ?? 0) + (s.height ?? s.r ?? 0)));
-    }
-
-    const width = Math.max(maxX - minX + 20, 50);
-    const height = Math.max(maxY - minY + 20, 50);
+    const { minX, minY, width, height } = getComponentBounds(component.shapes, component.pins);
 
     return (
-      <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="mx-auto">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`${minX} ${minY} ${width} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="mx-auto"
+      >
         {component.shapes?.map((shape, i) => {
           switch (shape.type) {
             case 'rect':
@@ -82,8 +105,37 @@ export default function ComponentModal() {
         </div>
         
         <div className="p-6 overflow-y-auto">
+          <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setSelectedCategory(tab)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium border transition-colors ${selectedCategory === tab ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400 hover:text-blue-600'}`}
+                >
+                  {tab === 'all' ? 'All' : CATEGORY_LABELS[tab]}
+                </button>
+              ))}
+            </div>
+            <div className="w-full md:w-64 md:ml-4">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search components..."
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {filteredComponents.length === 0 ? (
+            <div className="py-10 text-center text-sm text-gray-500">
+              No components found for this category and search.
+            </div>
+          ) : null}
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {library.map((component) => (
+            {filteredComponents.map((component) => (
               <button
                 key={component.id}
                 onClick={() => handleAddComponent(component)}
