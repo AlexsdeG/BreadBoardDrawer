@@ -1,4 +1,4 @@
-import { Download, MousePointer2, PenLine, Grid, MoveHorizontal, Plus, PlusCircle, Trash2, RotateCw, Save, Upload } from 'lucide-react';
+import { Download, MousePointer2, PenLine, Grid, MoveHorizontal, Plus, PlusCircle, Trash2, RotateCw, RotateCcw, Save, Upload } from 'lucide-react';
 import { exportCanvasToPng } from '../../utils/exportUtils';
 import { useEditorStore } from '../../store/useEditorStore';
 import { useReactFlow } from 'reactflow';
@@ -15,11 +15,14 @@ export default function Toolbar() {
   const updateEdgeData = useEditorStore(state => state.updateEdgeData);
   const getCanvasState = useEditorStore(state => state.getCanvasState);
   const loadCanvasState = useEditorStore(state => state.loadCanvasState);
+  const selectedNodeId = useEditorStore(state => state.selectedNodeId);
+  const rotateNode = useEditorStore(state => state.rotateNode);
   const { getEdges, getEdge } = useReactFlow();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selectedEdges = getEdges().filter(e => e.selected);
+  const isSingleComponentSelected = selectedNodeId !== null;
   const isSingleEdgeSelected = selectedEdges.length === 1;
   const isWaypointSelectedOnCurrentEdge = selectedWaypoint && isSingleEdgeSelected && selectedWaypoint.edgeId === selectedEdges[0].id;
 
@@ -144,6 +147,29 @@ export default function Toolbar() {
           <MoveHorizontal size={18} />
         </button>
       </div>
+
+      {/* Contextual Actions (Wire/Bend Selected) */}
+      {isSingleComponentSelected && (
+        <>
+          <div className="w-px h-8 bg-slate-200 mx-1" />
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => selectedNodeId && rotateNode(selectedNodeId, 'left')}
+              className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
+              title="Rotate Left"
+            >
+              <RotateCcw size={18} />
+            </button>
+            <button
+              onClick={() => selectedNodeId && rotateNode(selectedNodeId, 'right')}
+              className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
+              title="Rotate Right"
+            >
+              <RotateCw size={18} />
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Contextual Actions (Wire/Bend Selected) */}
       {isSingleEdgeSelected && (

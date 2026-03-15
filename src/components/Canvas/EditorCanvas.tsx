@@ -50,7 +50,7 @@ function DrawingOverlay({ mousePos }: { mousePos: { x: number, y: number } | nul
 
 function EditorCanvasInner() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode, library, interactionMode, drawingState, addWaypoint, cancelDrawing, drawSettings, rotateNode } = useEditorStore();
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, interactionMode, drawingState, addWaypoint, cancelDrawing, drawSettings, rotateNode, selectedNodeId, setSelectedNodeId } = useEditorStore();
   const { screenToFlowPosition } = useReactFlow();
   const [mousePos, setMousePos] = useState<{ x: number, y: number } | null>(null);
 
@@ -78,19 +78,22 @@ function EditorCanvasInner() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') cancelDrawing();
       if (e.key === 'r' || e.key === 'R') {
-        const selectedNode = nodes.find(n => n.selected);
-        if (selectedNode) {
-          rotateNode(selectedNode.id);
+        if (selectedNodeId) {
+          rotateNode(selectedNodeId);
         }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [cancelDrawing, nodes, rotateNode]);
+  }, [cancelDrawing, rotateNode, selectedNodeId]);
 
   const onEdgeClick = useCallback((e: React.MouseEvent, edge: any) => {
     useEditorStore.getState().setSelectedWaypoint(null);
   }, []);
+
+  const onSelectionChange = useCallback(({ nodes: selectedNodes }: { nodes: { id: string }[]; edges: unknown[] }) => {
+    setSelectedNodeId(selectedNodes.length === 1 ? selectedNodes[0].id : null);
+  }, [setSelectedNodeId]);
 
   return (
     <div 
@@ -111,6 +114,7 @@ function EditorCanvasInner() {
         edgeTypes={edgeTypes}
         onPaneClick={onPaneClick}
         onEdgeClick={onEdgeClick}
+        onSelectionChange={onSelectionChange}
         defaultEdgeOptions={{ type: 'advancedEdge' }}
         connectionMode={ConnectionMode.Loose}
         nodesDraggable={interactionMode === 'select'}

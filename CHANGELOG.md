@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.16] - 2026-03-15
+- Fixed toolbar rotate controls visibility by tracking selected node ID from React Flow selection events.
+- Rotate-left and rotate-right buttons now reliably appear when exactly one component is selected.
+
+## [0.0.15] - 2026-03-15
+- Added contextual rotate controls to the toolbar: rotate-left and rotate-right buttons appear only when a single component is selected.
+- Extended node rotation logic to support both directions while preserving snap rotation steps.
+
 ## [0.0.14] - 2026-03-15
 - Set startup default component to `Arduino Uno` (with fallback to the first library component).
 - Updated `Arduino Uno` pin definitions to match official counts: 14 digital I/O + 6 analog inputs.

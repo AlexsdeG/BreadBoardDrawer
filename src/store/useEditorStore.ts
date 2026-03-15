@@ -50,6 +50,8 @@ export interface EditorState {
   
   selectedWaypoint: { edgeId: string, index: number } | null;
   setSelectedWaypoint: (waypoint: { edgeId: string, index: number } | null) => void;
+  selectedNodeId: string | null;
+  setSelectedNodeId: (nodeId: string | null) => void;
   
   updateEdgeData: (edgeId: string, data: any) => void;
 
@@ -58,7 +60,7 @@ export interface EditorState {
 
   addNode: (node: Node) => void;
   updateNodePosition: (id: string, position: { x: number; y: number }) => void;
-  rotateNode: (id: string) => void;
+  rotateNode: (id: string, direction?: 'left' | 'right') => void;
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
@@ -135,6 +137,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   
   selectedWaypoint: null,
   setSelectedWaypoint: (waypoint) => set({ selectedWaypoint: waypoint }),
+  selectedNodeId: null,
+  setSelectedNodeId: (nodeId) => set({ selectedNodeId: nodeId }),
   
   updateEdgeData: (edgeId, data) => set({
     edges: get().edges.map((e) => e.id === edgeId ? { ...e, data: { ...e.data, ...data } } : e)
@@ -148,6 +152,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   loadCanvasState: (state) => set({
     nodes: state.nodes || [],
     edges: state.edges || [],
+    selectedNodeId: null,
     selectedWaypoint: null,
     drawingState: { isDrawing: false, sourceNodeId: null, sourceHandleId: null, sourcePos: null, waypoints: [] }
   }),
@@ -159,12 +164,15 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         n.id === id ? { ...n, position } : n
       ),
     }),
-  rotateNode: (id: string) =>
+  rotateNode: (id: string, direction: 'left' | 'right' = 'right') =>
     set({
       nodes: get().nodes.map((n) => {
         if (n.id === id) {
           const step = get().drawSettings.snapToRotate ? 90 : 15;
-          return { ...n, data: { ...n.data, rotation: ((n.data.rotation || 0) + step) % 360 } };
+          const delta = direction === 'left' ? -step : step;
+          const currentRotation = n.data.rotation || 0;
+          const nextRotation = ((currentRotation + delta) % 360 + 360) % 360;
+          return { ...n, data: { ...n.data, rotation: nextRotation } };
         }
         return n;
       }),
