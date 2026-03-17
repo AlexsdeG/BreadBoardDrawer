@@ -257,11 +257,13 @@ export interface BuilderSidebarProps {
   selectedLibraryComponentId: string | null;
   componentName: string;
   componentId: string;
+  description: string;
   category: Category;
   onSelectComponent: (componentId: string) => void;
   onCreateNew: () => void;
   onComponentNameChange: (value: string) => void;
   onComponentIdChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
   onCategoryChange: (value: Category) => void;
   nodes: Node[];
   onAddPrimitive: (type: PrimitiveType) => void;
@@ -278,11 +280,13 @@ export default function BuilderSidebar({
   selectedLibraryComponentId,
   componentName,
   componentId,
+  description,
   category,
   onSelectComponent,
   onCreateNew,
   onComponentNameChange,
   onComponentIdChange,
+  onDescriptionChange,
   onCategoryChange,
   nodes, onAddPrimitive, onAddText, onAddPin,
   onUpdateNode, onDeleteSelected, onSave, onCancel,
@@ -391,6 +395,15 @@ export default function BuilderSidebar({
             <span className={CLS.label}>ID (unique)</span>
             <input className={CLS.input} value={componentId}
               onChange={(e) => onComponentIdChange(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))} />
+          </label>
+          <label className="block">
+            <span className={CLS.label}>Description</span>
+            <textarea
+              className={`${CLS.input} min-h-[70px] resize-y`}
+              value={description}
+              onChange={(e) => onDescriptionChange(e.target.value)}
+              placeholder="Short description shown in the editor info card"
+            />
           </label>
           <label className="block">
             <span className={CLS.label}>Category</span>

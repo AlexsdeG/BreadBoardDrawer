@@ -9,9 +9,10 @@ import { defaultParts } from './config/defaultParts';
 import { ComponentShape, HardwareComponent } from './config/schemas';
 import { PinNodeData, PrimitiveNodeData, TextNodeData } from './components/Builder/BuilderCanvas';
 
-const BUILDER_EMPTY_COMPONENT: Pick<HardwareComponent, 'id' | 'name' | 'category'> = {
+const BUILDER_EMPTY_COMPONENT: Pick<HardwareComponent, 'id' | 'name' | 'description' | 'category'> = {
   id: 'my-component',
   name: 'My Component',
+  description: '',
   category: 'passive',
 };
 
@@ -162,6 +163,7 @@ export default function App() {
   const [builderNodes, setBuilderNodes] = useState<Node[]>([]);
   const [builderComponentName, setBuilderComponentName] = useState(BUILDER_EMPTY_COMPONENT.name);
   const [builderComponentId, setBuilderComponentId] = useState(BUILDER_EMPTY_COMPONENT.id);
+  const [builderDescription, setBuilderDescription] = useState(BUILDER_EMPTY_COMPONENT.description);
   const [builderCategory, setBuilderCategory] = useState(BUILDER_EMPTY_COMPONENT.category);
   const [selectedBuilderComponentId, setSelectedBuilderComponentId] = useState<string | null>(null);
 
@@ -252,6 +254,7 @@ export default function App() {
     setSelectedBuilderComponentId(null);
     setBuilderComponentName(BUILDER_EMPTY_COMPONENT.name);
     setBuilderComponentId(BUILDER_EMPTY_COMPONENT.id);
+    setBuilderDescription(BUILDER_EMPTY_COMPONENT.description);
     setBuilderCategory(BUILDER_EMPTY_COMPONENT.category);
     setBuilderNodes([]);
   };
@@ -263,13 +266,15 @@ export default function App() {
     setSelectedBuilderComponentId(component.id);
     setBuilderComponentName(component.name);
     setBuilderComponentId(component.id);
+    setBuilderDescription(component.description ?? '');
     setBuilderCategory(component.category);
     setBuilderNodes(componentToBuilderNodes(component));
   };
 
   const handleSaveComponent = (component: HardwareComponent) => {
-    addToLibrary(component);
-    setSelectedBuilderComponentId(component.id);
+    const componentWithDescription = { ...component, description: builderDescription.trim() || undefined };
+    addToLibrary(componentWithDescription);
+    setSelectedBuilderComponentId(componentWithDescription.id);
     setBuilderNodes([]);
     setAppMode('editor');
   };
@@ -282,11 +287,13 @@ export default function App() {
           selectedLibraryComponentId={selectedBuilderComponentId}
           componentName={builderComponentName}
           componentId={builderComponentId}
+          description={builderDescription}
           category={builderCategory}
           onSelectComponent={handleLoadBuilderComponent}
           onCreateNew={handleCreateNewBuilderComponent}
           onComponentNameChange={setBuilderComponentName}
           onComponentIdChange={setBuilderComponentId}
+          onDescriptionChange={setBuilderDescription}
           onCategoryChange={setBuilderCategory}
           nodes={builderNodes}
           onAddPrimitive={handleAddPrimitive}

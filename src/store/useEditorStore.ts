@@ -28,6 +28,19 @@ export interface DrawingState {
   waypoints: { x: number, y: number }[];
 }
 
+export interface HoverInfo {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  lines?: string[];
+  pins?: Array<{
+    id: string;
+    signalType: string;
+    pinType: string;
+    connected: boolean;
+  }>;
+}
+
 export interface EditorState {
   nodes: Node[];
   edges: Edge[];
@@ -50,6 +63,13 @@ export interface EditorState {
   addWaypoint: (pos: { x: number, y: number }) => void;
   finishDrawing: (targetNodeId: string, targetHandleId: string) => void;
   cancelDrawing: () => void;
+
+  hoverInfo: HoverInfo | null;
+  setHoverInfo: (info: HoverInfo | null) => void;
+  hoverInfoLocked: boolean;
+  setHoverInfoLocked: (locked: boolean) => void;
+  hoverSourceActive: boolean;
+  setHoverSourceActive: (active: boolean) => void;
   
   selectedWaypoint: { edgeId: string, index: number } | null;
   setSelectedWaypoint: (waypoint: { edgeId: string, index: number } | null) => void;
@@ -108,6 +128,12 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     sourcePos: null,
     waypoints: [],
   },
+  hoverInfo: null,
+  setHoverInfo: (info) => set({ hoverInfo: info }),
+  hoverInfoLocked: false,
+  setHoverInfoLocked: (locked) => set({ hoverInfoLocked: locked }),
+  hoverSourceActive: false,
+  setHoverSourceActive: (active) => set({ hoverSourceActive: active }),
   startDrawing: (nodeId, handleId, pos) => set({
     drawingState: { isDrawing: true, sourceNodeId: nodeId, sourceHandleId: handleId, sourcePos: pos, waypoints: [] }
   }),
@@ -178,6 +204,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     edges: state.edges || [],
     selectedNodeId: null,
     selectedWaypoint: null,
+    hoverInfo: null,
+    hoverSourceActive: false,
     drawingState: { isDrawing: false, sourceNodeId: null, sourceHandleId: null, sourcePos: null, waypoints: [] }
   }),
 
