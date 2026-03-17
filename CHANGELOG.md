@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.18] - 2026-03-17
+- Expanded the Component Builder with editable shape selection, multi-select deletion, and a properties inspector for the selected builder item.
+- Added new builder primitives: rounded rectangles, ellipses/ovals, triangles, diamonds, and text nodes, alongside the existing rect/circle tools.
+- Added per-pin signal type editing in the builder (`default`, `digital`, `analog`, `pwm`, `power`, `gnd`) with visual pin color feedback.
+- Added editable builder attributes for position, size, radii, text content, colors, stroke width, layer ordering, and primitive type switching.
+- Extended runtime shape support so saved custom components can render new `ellipse` and `polygon`-based shapes on the main editor canvas.
+
 ## [0.0.17] - 2026-03-15
 - Added Component Builder mode: a dedicated ReactFlow canvas (`BuilderCanvas`) for placing and grid-snapping SVG rect/circle primitives and pins.
 - Added `BuilderSidebar` with Name, ID, Category inputs and Add Rect / Add Circle / Add Pin buttons; Save Component serialises the layout into a `HardwareComponent` and persists it to `localStorage`.

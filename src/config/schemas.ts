@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const ShapeSchema = z.object({
-  type: z.enum(['rect', 'circle', 'path', 'text']),
+  type: z.enum(['rect', 'circle', 'ellipse', 'polygon', 'path', 'text']),
   x: z.number().optional(),
   y: z.number().optional(),
   width: z.number().optional(),
@@ -20,6 +20,8 @@ export const ShapeSchema = z.object({
   fontFamily: z.string().optional(),
   fontWeight: z.union([z.string(), z.number()]).optional(),
   textAnchor: z.string().optional(),
+  points: z.string().optional(),
+  layer: z.number().optional(),
 });
 
 export const PropertySchema = z.object({

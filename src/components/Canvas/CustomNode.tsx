@@ -79,6 +79,10 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
               return <circle key={i} cx={shape.cx} cy={shape.cy} r={shape.r} fill={shape.fill} stroke={shape.stroke} strokeWidth={shape.strokeWidth} />;
             case 'path':
               return <path key={i} d={shape.d} fill={shape.fill} stroke={shape.stroke} strokeWidth={shape.strokeWidth} />;
+            case 'ellipse':
+              return <ellipse key={i} cx={shape.cx} cy={shape.cy} rx={shape.rx} ry={shape.ry} fill={shape.fill} stroke={shape.stroke} strokeWidth={shape.strokeWidth} />;
+            case 'polygon':
+              return <polygon key={i} points={shape.points} fill={shape.fill} stroke={shape.stroke} strokeWidth={shape.strokeWidth} />;
             case 'text': {
               const { resolvedText, key } = resolveShapeText(shape.text);
               const textTitle = key ? String(data.customValues?.[key] ?? componentDef?.properties?.find((property) => property.id === key)?.default ?? '') : shape.text;
