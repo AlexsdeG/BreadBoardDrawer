@@ -49,6 +49,7 @@ export default function ComponentModal() {
       type: 'custom',
       position: centerPos,
       data: {
+        componentId: component.id,
         shapes: component.shapes,
         pins: component.pins,
         rotation: 0,

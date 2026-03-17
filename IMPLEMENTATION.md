@@ -1,83 +1,62 @@
-```markdown
-# IMPLEMENTATION.md
 
 ## 1. Project Context & Architecture
-**Goal:** Upgrade the ReactFlow-based breadboard drawing application by introducing a rich, colorful electronic component library and fixing the SVG bounding box calculation to ensure selection outlines fit tightly around components.
-
-**Tech Stack & Dependencies:**
-- **Environment:** Node.js / Vite
-- **Framework:** React, TypeScript
-- **Libraries:** ReactFlow, Zustand, Zod, TailwindCSS
-
-**File Structure:**
-```text
-breadboarddrawer/
-└── src/
-    ├── config/
-    │   ├── schemas.ts         # Zod schemas defining component shapes
-    │   └── defaultParts.ts    # Library of pre-defined hardware components
-    ├── components/
-    │   ├── Canvas/
-    │   │   └── CustomNode.tsx # ReactFlow node renderer
-    │   └── UI/
-    │       └── ComponentModal.tsx # Component selection menu
-    └── App.tsx                # Main application entry point
-
-```
-
-**Attention Points:**
-
-* **Bounding Box Math:** The bounding box algorithm must account for `circle` properties (`cx`, `cy`, `r`, `strokeWidth`) differently than `rect` properties (`x`, `y`, `width`, `height`).
-* **SVG Attributes:** Ensure React-specific SVG attributes are used (e.g., `strokeWidth`, `fontFamily`, `fontSize`, `textAnchor`) and properly cast if TypeScript complains about string/number unions.
-
----
+- **Goal:** Expand the breadboard schematic canvas to support dynamic component properties (e.g., adjustable resistor values), advanced pin metadata (PWM, Analog), multi-cable junction points, canvas hover tooltips, and a visual Component Builder for creating and modifying components.
+- **Tech Stack & Dependencies:** Node.js, React 18, Vite, TypeScript, `reactflow`, `zustand`, `zod`, `tailwindcss`.
+- **File Structure:**
+  ```text
+  ├── src/
+  │   ├── components/
+  │   │   ├── Builder/                 # NEW: Component editor modules
+  │   │   │   ├── BuilderCanvas.tsx
+  │   │   │   └── BuilderSidebar.tsx
+  │   │   ├── Canvas/
+  │   │   │   └── CustomNode.tsx       # Update for hover tooltips & dynamic text
+  │   │   └── UI/
+  │   │       └── PropertyPanel.tsx    # NEW: Edit node properties (e.g., Ohm values)
+  │   ├── config/
+  │   │   ├── schemas.ts               # Extend Pin and Component schemas
+  │   │   └── defaultParts.ts          # Add junction point, property definitions
+  │   └── store/
+  │       └── useEditorStore.ts        # Add customValues state, Builder mode
+  ```
+- **Attention Points:**
+  - **Dynamic Injection:** Text inside components (e.g., "1kΩ") must be dynamically injected via `{{propertyName}}` interpolation in `CustomNode.tsx` based on the node's `data.customValues`.
+  - **Tooltips:** Use native `title` attributes on SVG elements and ReactFlow `<Handle>` components to satisfy hover requirements simply and reliably.
+  - **Junctions:** A junction is treated as a zero-dimension or minimal-dimension component with a single pin that allows infinite connections. ReactFlow handles multi-connections by default if no `connectionLimit` is set.
 
 ## 2. Execution Phases
 
-#### Phase 1: Schema Extension
+#### Phase 1: Schema Extension & Data Modeling
+- [x] **Step 1.1:** In `src/config/schemas.ts`, add a `PropertySchema` using Zod: `z.object({ id: z.string(), label: z.string(), type: z.enum(['text', 'number', 'select']), options: z.array(z.string()).optional(), default: z.any() })`.
+- [x] **Step 1.2:** In `src/config/schemas.ts`, update `ComponentSchema` to include `properties: z.array(PropertySchema).optional()`.
+- [x] **Step 1.3:** In `src/config/schemas.ts`, update `PinSchema` to include `signalType: z.enum(['digital', 'analog', 'pwm', 'power', 'gnd', 'default']).default('default')`.
+- [x] **Step 1.4:** In `src/store/useEditorStore.ts`, add a new action `updateNodeData(nodeId: string, customValues: Record<string, any>)` to modify a specific node's `data.customValues`.
+- [x] **Step 1.5:** In `src/store/useEditorStore.ts`, add `appMode: 'editor' | 'builder'` to the `EditorState`, along with a `setAppMode` action.
+- [x] **Verification:** Run `npx tsc --noEmit` and verify no TypeScript errors are present after schema and store modifications.
 
-* [x] **Step 1.1:** Open `src/config/schemas.ts`.
-* [x] **Step 1.2:** Extend `ShapeSchema` to include optional properties for rounded corners and text formatting: `rx: z.number().optional()`, `ry: z.number().optional()`, and `fontWeight: z.union([z.string(), z.number()]).optional()`.
-* [x] **Verification:** Run `npx tsc --noEmit` to verify that the schema changes do not break any existing type inferences.
+#### Phase 2: Dynamic Properties & Hover Tooltips
+- [x] **Step 2.1:** In `src/config/defaultParts.ts`, update the `resistor` component: add `properties: [{ id: 'resistance', label: 'Resistance', type: 'select', options: ['220Ω', '330Ω', '1kΩ', '10kΩ'], default: '1kΩ' }]`.
+- [x] **Step 2.2:** In `src/config/defaultParts.ts`, change the resistor's text shape `text` property from `'1kΩ'` to `'{{resistance}}'`. Update Arduino Uno/Nano pins to include appropriate `signalType` (e.g., `analog` for A0-A5, `pwm` for PWM pins).
+- [x] **Step 2.3:** In `src/components/Canvas/CustomNode.tsx`, implement a helper function to parse `shape.text`. If the string contains `{{key}}`, replace it with `data.customValues?.[key] ?? componentDef.properties?.find(p => p.id === key)?.default`.
+- [x] **Step 2.4:** In `src/components/Canvas/CustomNode.tsx`, modify the rendered `<text>` shape wrapper and `<Handle>` elements to include a `title` attribute. Set `title` to `data.customValues?.[key]` for text, and ``${pin.id} (${pin.signalType})`` for handles.
+- [x] **Verification:** Run `npm run dev`. Spawn a resistor and hover over its text to see the tooltip. Hover over an Arduino Uno A0 pin to see the tooltip "a0 (analog)".
 
-#### Phase 2: Component Library Upgrade
+#### Phase 3: Junction Point & Property Panel UI
+- [x] **Step 3.1:** In `src/config/defaultParts.ts`, add a new component `id: 'junction'`, category `passive`. Shape: a single black filled circle (`r: 4`). Pins: a single pin at `x:0, y:0` with `type: 'inout'`.
+- [x] **Step 3.2:** Create `src/components/UI/PropertyPanel.tsx`. Retrieve `selectedNodeId` from the store. Find the matching node and its base definition in `library`.
+- [x] **Step 3.3:** In `PropertyPanel.tsx`, iterate over the component's `properties` array. Render a `<select>` for type `select`. Bind the `onChange` event to call `updateNodeData(selectedNodeId, { [prop.id]: e.target.value })`.
+- [x] **Step 3.4:** Mount `<PropertyPanel />` in `src/App.tsx` (or your main layout container) absolute positioned on the right side.
+- [x] **Verification:** Spawn a resistor, select it, and use the Property Panel to change its value to "10kΩ". Verify the SVG text updates immediately on the canvas. Add a Junction point, connect three wires to it, and verify the UI handles it cleanly.
 
-* [x] **Step 2.1:** Open `src/config/defaultParts.ts`.
-* [x] **Step 2.2:** Replace the existing dummy components with the newly defined rich component array (Resistor, Ceramic Capacitor, Electrolytic Cap, Red/Green LEDs, Diode, 555 Timer IC, NPN Transistor, Push Button, 9V Battery, Inductor).
-* [x] **Step 2.3:** Ensure all shapes utilize the newly available schema properties (e.g., `rx`, `fill`, `strokeWidth`, `fontWeight`).
-* [x] **Verification:** Run `npx tsc --noEmit` to ensure the new `defaultParts` array perfectly satisfies the `HardwareComponent[]` type.
-
-#### Phase 3: Bounding Box Engine in CustomNode
-
-* [x] **Step 3.1:** Open `src/components/Canvas/CustomNode.tsx`.
-* [x] **Step 3.2:** Implement rigorous min/max bounding box calculations before the `return` statement. Iterate through `data.shapes` to find `minX`, `minY`, `maxX`, and `maxY` based on shape geometry (accounting for stroke width) and through `data.pins` (accounting for a 5px pin radius).
-* [x] **Step 3.3:** Apply a uniform padding of `2` to the calculated min/max values. Calculate `width = maxX - minX` and `height = maxY - minY`.
-* [x] **Step 3.4:** Update the wrapper `div` to explicitly use the calculated `width` and `height` in its `style` prop, and update the SVG `viewBox` attribute to `viewBox={`${minX} ${minY} ${width} ${height}`}`.
-* [x] **Step 3.5:** Adjust the `Handle` absolute positioning logic so that pins are placed relative to the new `minX` and `minY` offsets (`left: pin.x - minX`, `top: pin.y - minY`).
-* [ ] **Verification:** Start the dev server (`npm run dev`). Place a component on the canvas and click it. Verify the blue selection ring tightly hugs the component rather than being massively oversized.
-
-#### Phase 4: Modal Preview Bounding Box Sync
-
-* [x] **Step 4.1:** Open `src/components/UI/ComponentModal.tsx`.
-* [x] **Step 4.2:** Locate the `renderPreview` function.
-* [x] **Step 4.3:** Replicate the exact min/max bounding box math from Phase 3 into the `renderPreview` function to calculate `minX`, `minY`, `width`, and `height` for the preview SVG.
-* [x] **Step 4.4:** Apply the calculated `viewBox` to the preview `<svg>` element.
-* [ ] **Verification:** Open the application, trigger the Component Modal, and verify that all complex components (like the 9V battery and ICs) render centered and fully visible within their preview boxes without getting cropped.
-
-#### Phase 5: App Initialization Sync
-
-* [x] **Step 5.1:** Open `src/App.tsx`.
-* [x] **Step 5.2:** Ensure the initial `useEffect` that populates the canvas uses `defaultParts[0].shapes` and `defaultParts[0].pins` if the canvas is empty.
-* [ ] **Verification:** Clear local storage/state, refresh the app, and verify that the default component (Resistor) loads cleanly onto the canvas.
-
----
+#### Phase 4: Component Builder Mode
+- [x] **Step 4.1:** Create `src/components/Builder/BuilderCanvas.tsx` containing an isolated `<ReactFlow>` instance tailored for grid-snapping single SVG primitives (Rects, Circles).
+- [x] **Step 4.2:** Create `src/components/Builder/BuilderSidebar.tsx` with inputs for Component Name, ID, Category, and buttons to "Add Pin", "Add Rect", etc., which add generic primitive nodes to the `BuilderCanvas`.
+- [x] **Step 4.3:** Implement a "Save Component" button in `BuilderSidebar.tsx`. Write logic to calculate the bounding box of the drawn primitives, normalize their coordinates relative to the bounding box, and serialize them into a valid `HardwareComponent` JSON object.
+- [x] **Step 4.4:** In `src/store/useEditorStore.ts`, modify the initialization of `library` to merge `defaultParts` with any custom components stored in `localStorage.getItem('customComponents')`.
+- [x] **Step 4.5:** Update the main application routing/UI to conditionally render `EditorCanvas` or `BuilderCanvas` based on `appMode`.
+- [x] **Verification:** Switch to Builder mode. Draw a basic square, add two pins, and fill out the category metadata. Click "Save Component". Switch to Editor mode, open the Component Modal, and verify the newly built component is spawnable.
 
 ## 3. Global Testing Strategy
-
-* **Visual Fidelity Test:** Spawn every single component from the modal onto the canvas. Verify colors, borders, and text labels (e.g., "NE555", "9V", "+", "-") render correctly.
-* **Pin Routing Test:** Enter drawing mode and attempt to draw a wire from the anode of an LED to the pin of a 555 Timer. Verify the exact anchor points align with the visible grey pin circles.
-* **Transform & Rotation Test:** Select an asymmetrical component (like the 9V battery). Verify that the bounding box and selection ring remain perfectly aligned when the component is rotated.
-
-```
-
-```
+- **Property Persistance:** Spawn a resistor, set it to "220Ω", save the canvas to JSON using the export utility, reload the page, and load the JSON. Verify the resistor retains its "220Ω" visual value and custom data.
+- **Pin Routing on Custom Components:** Create an asymmetrical component in the Builder, save it, spawn it in the editor, and verify wires snap exactly to the custom pins without offset.
+- **Multi-Node Junction:** Drop a Junction point and attach wires from an Arduino 5V pin, a resistor, and an LED anode. Rotate the Junction point and ensure all wires recalculate cleanly.

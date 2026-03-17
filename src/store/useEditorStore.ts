@@ -32,6 +32,9 @@ export interface EditorState {
   nodes: Node[];
   edges: Edge[];
   library: HardwareComponent[];
+
+  appMode: 'editor' | 'builder';
+  setAppMode: (mode: 'editor' | 'builder') => void;
   
   isComponentModalOpen: boolean;
   setComponentModalOpen: (isOpen: boolean) => void;
@@ -54,6 +57,7 @@ export interface EditorState {
   setSelectedNodeId: (nodeId: string | null) => void;
   
   updateEdgeData: (edgeId: string, data: any) => void;
+  updateNodeData: (nodeId: string, customValues: Record<string, any>) => void;
 
   getCanvasState: () => { nodes: Node[], edges: Edge[] };
   loadCanvasState: (state: { nodes: Node[], edges: Edge[] }) => void;
@@ -64,12 +68,25 @@ export interface EditorState {
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
+  addToLibrary: (component: HardwareComponent) => void;
+}
+
+function loadCustomComponents(): HardwareComponent[] {
+  try {
+    const stored = localStorage.getItem('customComponents');
+    return stored ? (JSON.parse(stored) as HardwareComponent[]) : [];
+  } catch {
+    return [];
+  }
 }
 
 export const useEditorStore = create<EditorState>((set, get) => ({
   nodes: [],
   edges: [],
-  library: defaultParts,
+  library: [...defaultParts, ...loadCustomComponents().filter((c) => !defaultParts.some((d) => d.id === c.id))],
+
+  appMode: 'editor',
+  setAppMode: (mode) => set({ appMode: mode }),
   
   isComponentModalOpen: false,
   setComponentModalOpen: (isOpen) => set({ isComponentModalOpen: isOpen }),
@@ -143,6 +160,13 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   updateEdgeData: (edgeId, data) => set({
     edges: get().edges.map((e) => e.id === edgeId ? { ...e, data: { ...e.data, ...data } } : e)
   }),
+  updateNodeData: (nodeId, customValues) => set({
+    nodes: get().nodes.map((n) =>
+      n.id === nodeId
+        ? { ...n, data: { ...n.data, customValues: { ...n.data?.customValues, ...customValues } } }
+        : n
+    ),
+  }),
 
   getCanvasState: () => {
     const { nodes, edges } = get();
@@ -185,6 +209,21 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     set({
       edges: applyEdgeChanges(changes, get().edges),
     }),
+  addToLibrary: (component) => {
+    let updated: HardwareComponent[] = [component];
+    try {
+      const stored = localStorage.getItem('customComponents');
+      const existing: HardwareComponent[] = stored ? (JSON.parse(stored) as HardwareComponent[]) : [];
+      updated = [...existing.filter((c) => c.id !== component.id), component];
+      localStorage.setItem('customComponents', JSON.stringify(updated));
+    } catch { /* ignore persistence failure */ }
+    set({
+      library: [
+        ...defaultParts,
+        ...updated.filter((c) => !defaultParts.some((d) => d.id === c.id)),
+      ],
+    });
+  },
   onConnect: (connection: Connection) => {
     const { drawSettings } = get();
     const newEdge = {

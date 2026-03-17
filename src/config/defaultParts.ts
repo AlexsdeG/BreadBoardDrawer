@@ -5,6 +5,15 @@ export const defaultParts: HardwareComponent[] = [
     id: 'resistor',
     name: 'Resistor',
     category: 'passive',
+    properties: [
+      {
+        id: 'resistance',
+        label: 'Resistance',
+        type: 'select',
+        options: ['220Ω', '330Ω', '1kΩ', '10kΩ'],
+        default: '1kΩ',
+      },
+    ],
     shapes: [
       { type: 'rect', x: 0, y: 0, width: 72, height: 32, fill: 'transparent', stroke: 'none', strokeWidth: 0 },
       { type: 'rect', x: 4, y: 15, width: 14, height: 2, fill: '#6b7280' },
@@ -14,11 +23,22 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'rect', x: 31, y: 9, width: 3, height: 14, fill: '#111827' },
       { type: 'rect', x: 37, y: 9, width: 3, height: 14, fill: '#dc2626' },
       { type: 'rect', x: 43, y: 9, width: 3, height: 14, fill: '#f59e0b' },
-      { type: 'text', x: 36, y: 29, text: '1kΩ', fill: '#5b4636', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
+      { type: 'text', x: 36, y: 29, text: '{{resistance}}', fill: '#5b4636', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'a', x: 4, y: 16, type: 'inout' },
-      { id: 'b', x: 68, y: 16, type: 'inout' }
+      { id: 'a', x: 4, y: 16, type: 'inout', signalType: 'default' },
+      { id: 'b', x: 68, y: 16, type: 'inout', signalType: 'default' }
+    ]
+  },
+  {
+    id: 'junction',
+    name: 'Junction',
+    category: 'passive',
+    shapes: [
+      { type: 'circle', cx: 0, cy: 0, r: 4, fill: '#000000' }
+    ],
+    pins: [
+      { id: 'junction', x: 0, y: 0, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -35,8 +55,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 30, y: 33, text: '104', fill: '#92400e', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'a', x: 6, y: 18, type: 'inout' },
-      { id: 'b', x: 54, y: 18, type: 'inout' }
+      { id: 'a', x: 6, y: 18, type: 'inout', signalType: 'default' },
+      { id: 'b', x: 54, y: 18, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -53,8 +73,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 32, y: 38, text: '10µF', fill: '#1e3a8a', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'positive', x: 6, y: 20, type: 'inout' },
-      { id: 'negative', x: 58, y: 20, type: 'inout' }
+      { id: 'positive', x: 6, y: 20, type: 'inout', signalType: 'default' },
+      { id: 'negative', x: 58, y: 20, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -70,8 +90,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 30, y: 32, text: 'LED', fill: '#991b1b', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'anode', x: 6, y: 17, type: 'inout' },
-      { id: 'cathode', x: 54, y: 17, type: 'inout' }
+      { id: 'anode', x: 6, y: 17, type: 'inout', signalType: 'default' },
+      { id: 'cathode', x: 54, y: 17, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -87,8 +107,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 30, y: 32, text: 'LED', fill: '#166534', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'anode', x: 6, y: 17, type: 'inout' },
-      { id: 'cathode', x: 54, y: 17, type: 'inout' }
+      { id: 'anode', x: 6, y: 17, type: 'inout', signalType: 'default' },
+      { id: 'cathode', x: 54, y: 17, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -105,8 +125,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 37, y: 28, text: '1N4148', fill: '#854d0e', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'anode', x: 6, y: 15, type: 'inout' },
-      { id: 'cathode', x: 68, y: 15, type: 'inout' }
+      { id: 'anode', x: 6, y: 15, type: 'inout', signalType: 'default' },
+      { id: 'cathode', x: 68, y: 15, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -129,14 +149,14 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 46, y: 42, text: 'TIMER', fill: '#9ca3af', fontSize: 7, fontFamily: 'Arial, sans-serif', fontWeight: 600, textAnchor: 'middle' }
     ],
     pins: [
-      { id: '1-gnd', x: 14, y: 16, type: 'inout' },
-      { id: '2-trig', x: 14, y: 26, type: 'inout' },
-      { id: '3-out', x: 14, y: 36, type: 'output' },
-      { id: '4-reset', x: 14, y: 46, type: 'input' },
-      { id: '8-vcc', x: 78, y: 16, type: 'input' },
-      { id: '7-dis', x: 78, y: 26, type: 'output' },
-      { id: '6-thr', x: 78, y: 36, type: 'input' },
-      { id: '5-ctrl', x: 78, y: 46, type: 'input' }
+      { id: '1-gnd', x: 14, y: 16, type: 'inout', signalType: 'gnd' },
+      { id: '2-trig', x: 14, y: 26, type: 'inout', signalType: 'default' },
+      { id: '3-out', x: 14, y: 36, type: 'output', signalType: 'digital' },
+      { id: '4-reset', x: 14, y: 46, type: 'input', signalType: 'digital' },
+      { id: '8-vcc', x: 78, y: 16, type: 'input', signalType: 'power' },
+      { id: '7-dis', x: 78, y: 26, type: 'output', signalType: 'digital' },
+      { id: '6-thr', x: 78, y: 36, type: 'input', signalType: 'default' },
+      { id: '5-ctrl', x: 78, y: 46, type: 'input', signalType: 'analog' }
     ]
   },
   {
@@ -155,9 +175,9 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 32, y: 60, text: 'NPN', fill: '#374151', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'collector', x: 32, y: 6, type: 'inout' },
-      { id: 'base', x: 6, y: 32, type: 'input' },
-      { id: 'emitter', x: 32, y: 58, type: 'output' }
+      { id: 'collector', x: 32, y: 6, type: 'inout', signalType: 'default' },
+      { id: 'base', x: 6, y: 32, type: 'input', signalType: 'default' },
+      { id: 'emitter', x: 32, y: 58, type: 'output', signalType: 'default' }
     ]
   },
   {
@@ -175,10 +195,10 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 35, y: 39, text: 'SW', fill: '#334155', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'top-left', x: 10, y: 18, type: 'inout' },
-      { id: 'bottom-left', x: 10, y: 26, type: 'inout' },
-      { id: 'top-right', x: 60, y: 18, type: 'inout' },
-      { id: 'bottom-right', x: 60, y: 26, type: 'inout' }
+      { id: 'top-left', x: 10, y: 18, type: 'inout', signalType: 'default' },
+      { id: 'bottom-left', x: 10, y: 26, type: 'inout', signalType: 'default' },
+      { id: 'top-right', x: 60, y: 18, type: 'inout', signalType: 'default' },
+      { id: 'bottom-right', x: 60, y: 26, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -196,8 +216,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 50, y: 49, text: '-', fill: '#f8fafc', fontSize: 12, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'positive', x: 31, y: 6, type: 'output' },
-      { id: 'negative', x: 49, y: 6, type: 'output' }
+      { id: 'positive', x: 31, y: 6, type: 'output', signalType: 'power' },
+      { id: 'negative', x: 49, y: 6, type: 'output', signalType: 'gnd' }
     ]
   },
   {
@@ -215,8 +235,8 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 39, y: 31, text: '10µH', fill: '#6d28d9', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'a', x: 6, y: 17, type: 'inout' },
-      { id: 'b', x: 72, y: 17, type: 'inout' }
+      { id: 'a', x: 6, y: 17, type: 'inout', signalType: 'default' },
+      { id: 'b', x: 72, y: 17, type: 'inout', signalType: 'default' }
     ]
   },
   {
@@ -235,26 +255,26 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 67, y: 69, text: 'R3', fill: '#bfdbfe', fontSize: 8, fontFamily: 'Arial, sans-serif', fontWeight: 600, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'd0-rx', x: 16, y: 10, type: 'inout' },
-      { id: 'd1-tx', x: 24, y: 10, type: 'inout' },
-      { id: 'd2', x: 32, y: 10, type: 'inout' },
-      { id: 'd3-pwm', x: 40, y: 10, type: 'inout' },
-      { id: 'd4', x: 48, y: 10, type: 'inout' },
-      { id: 'd5-pwm', x: 56, y: 10, type: 'inout' },
-      { id: 'd6-pwm', x: 64, y: 10, type: 'inout' },
-      { id: 'd7', x: 72, y: 10, type: 'inout' },
-      { id: 'd8', x: 80, y: 10, type: 'inout' },
-      { id: 'd9-pwm', x: 88, y: 10, type: 'inout' },
-      { id: 'd10-pwm', x: 96, y: 10, type: 'inout' },
-      { id: 'd11-pwm', x: 104, y: 10, type: 'inout' },
-      { id: 'd12', x: 112, y: 10, type: 'inout' },
-      { id: 'd13-led', x: 120, y: 10, type: 'inout' },
-      { id: 'a0', x: 30, y: 72, type: 'input' },
-      { id: 'a1', x: 42, y: 72, type: 'input' },
-      { id: 'a2', x: 54, y: 72, type: 'input' },
-      { id: 'a3', x: 66, y: 72, type: 'input' },
-      { id: 'a4-sda', x: 78, y: 72, type: 'input' },
-      { id: 'a5-scl', x: 90, y: 72, type: 'input' }
+      { id: 'd0-rx', x: 16, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd1-tx', x: 24, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd2', x: 32, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd3-pwm', x: 40, y: 10, type: 'inout', signalType: 'pwm' },
+      { id: 'd4', x: 48, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd5-pwm', x: 56, y: 10, type: 'inout', signalType: 'pwm' },
+      { id: 'd6-pwm', x: 64, y: 10, type: 'inout', signalType: 'pwm' },
+      { id: 'd7', x: 72, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd8', x: 80, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd9-pwm', x: 88, y: 10, type: 'inout', signalType: 'pwm' },
+      { id: 'd10-pwm', x: 96, y: 10, type: 'inout', signalType: 'pwm' },
+      { id: 'd11-pwm', x: 104, y: 10, type: 'inout', signalType: 'pwm' },
+      { id: 'd12', x: 112, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'd13-led', x: 120, y: 10, type: 'inout', signalType: 'digital' },
+      { id: 'a0', x: 30, y: 72, type: 'input', signalType: 'analog' },
+      { id: 'a1', x: 42, y: 72, type: 'input', signalType: 'analog' },
+      { id: 'a2', x: 54, y: 72, type: 'input', signalType: 'analog' },
+      { id: 'a3', x: 66, y: 72, type: 'input', signalType: 'analog' },
+      { id: 'a4-sda', x: 78, y: 72, type: 'input', signalType: 'analog' },
+      { id: 'a5-scl', x: 90, y: 72, type: 'input', signalType: 'analog' }
     ]
   },
   {
@@ -270,28 +290,28 @@ export const defaultParts: HardwareComponent[] = [
       { type: 'text', x: 51, y: 33, text: 'NANO', fill: '#ecfeff', fontSize: 9, fontFamily: 'Arial, sans-serif', fontWeight: 700, textAnchor: 'middle' }
     ],
     pins: [
-      { id: 'd0-rx', x: 14, y: 8, type: 'inout' },
-      { id: 'd1-tx', x: 14, y: 11, type: 'inout' },
-      { id: 'd2', x: 14, y: 14, type: 'inout' },
-      { id: 'd3-pwm', x: 14, y: 17, type: 'inout' },
-      { id: 'd4', x: 14, y: 20, type: 'inout' },
-      { id: 'd5-pwm', x: 14, y: 23, type: 'inout' },
-      { id: 'd6-pwm', x: 14, y: 26, type: 'inout' },
-      { id: 'd7', x: 14, y: 29, type: 'inout' },
-      { id: 'd8', x: 14, y: 32, type: 'inout' },
-      { id: 'd9-pwm', x: 14, y: 35, type: 'inout' },
-      { id: 'd10-pwm', x: 14, y: 38, type: 'inout' },
-      { id: 'd11-pwm', x: 88, y: 8, type: 'inout' },
-      { id: 'd12', x: 88, y: 11, type: 'inout' },
-      { id: 'd13-led', x: 88, y: 14, type: 'inout' },
-      { id: 'a0', x: 88, y: 17, type: 'input' },
-      { id: 'a1', x: 88, y: 20, type: 'input' },
-      { id: 'a2', x: 88, y: 23, type: 'input' },
-      { id: 'a3', x: 88, y: 26, type: 'input' },
-      { id: 'a4-sda', x: 88, y: 29, type: 'input' },
-      { id: 'a5-scl', x: 88, y: 32, type: 'input' },
-      { id: 'a6', x: 88, y: 35, type: 'input' },
-      { id: 'a7', x: 88, y: 38, type: 'input' }
+      { id: 'd0-rx', x: 14, y: 8, type: 'inout', signalType: 'digital' },
+      { id: 'd1-tx', x: 14, y: 11, type: 'inout', signalType: 'digital' },
+      { id: 'd2', x: 14, y: 14, type: 'inout', signalType: 'digital' },
+      { id: 'd3-pwm', x: 14, y: 17, type: 'inout', signalType: 'pwm' },
+      { id: 'd4', x: 14, y: 20, type: 'inout', signalType: 'digital' },
+      { id: 'd5-pwm', x: 14, y: 23, type: 'inout', signalType: 'pwm' },
+      { id: 'd6-pwm', x: 14, y: 26, type: 'inout', signalType: 'pwm' },
+      { id: 'd7', x: 14, y: 29, type: 'inout', signalType: 'digital' },
+      { id: 'd8', x: 14, y: 32, type: 'inout', signalType: 'digital' },
+      { id: 'd9-pwm', x: 14, y: 35, type: 'inout', signalType: 'pwm' },
+      { id: 'd10-pwm', x: 14, y: 38, type: 'inout', signalType: 'pwm' },
+      { id: 'd11-pwm', x: 88, y: 8, type: 'inout', signalType: 'pwm' },
+      { id: 'd12', x: 88, y: 11, type: 'inout', signalType: 'digital' },
+      { id: 'd13-led', x: 88, y: 14, type: 'inout', signalType: 'digital' },
+      { id: 'a0', x: 88, y: 17, type: 'input', signalType: 'analog' },
+      { id: 'a1', x: 88, y: 20, type: 'input', signalType: 'analog' },
+      { id: 'a2', x: 88, y: 23, type: 'input', signalType: 'analog' },
+      { id: 'a3', x: 88, y: 26, type: 'input', signalType: 'analog' },
+      { id: 'a4-sda', x: 88, y: 29, type: 'input', signalType: 'analog' },
+      { id: 'a5-scl', x: 88, y: 32, type: 'input', signalType: 'analog' },
+      { id: 'a6', x: 88, y: 35, type: 'input', signalType: 'analog' },
+      { id: 'a7', x: 88, y: 38, type: 'input', signalType: 'analog' }
     ]
   }
 ];

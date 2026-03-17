@@ -22,17 +22,27 @@ export const ShapeSchema = z.object({
   textAnchor: z.string().optional(),
 });
 
+export const PropertySchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  type: z.enum(['text', 'number', 'select']),
+  options: z.array(z.string()).optional(),
+  default: z.any(),
+});
+
 export const PinSchema = z.object({
   id: z.string(),
   x: z.number(),
   y: z.number(),
   type: z.enum(['input', 'output', 'inout', 'any']).default('any'),
+  signalType: z.enum(['digital', 'analog', 'pwm', 'power', 'gnd', 'default']).default('default'),
 });
 
 export const ComponentSchema = z.object({
   id: z.string(),
   name: z.string(),
   category: z.enum(['passive', 'diode-led', 'ic', 'transistor', 'switch', 'power', 'microcontroller']).default('passive'),
+  properties: z.array(PropertySchema).optional(),
   shapes: z.array(ShapeSchema),
   pins: z.array(PinSchema),
 });

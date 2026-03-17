@@ -4,14 +4,47 @@ import { ComponentShape, ComponentPin } from '../../config/schemas';
 import { useEditorStore } from '../../store/useEditorStore';
 import { getComponentBounds } from '../../utils/componentBounds';
 
-export default function CustomNode({ id, data, selected }: NodeProps<{ shapes: ComponentShape[]; pins: ComponentPin[]; rotation?: number }>) {
+type CustomNodeData = {
+  componentId?: string;
+  shapes: ComponentShape[];
+  pins: ComponentPin[];
+  rotation?: number;
+  customValues?: Record<string, any>;
+};
+
+export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeData>) {
   const interactionMode = useEditorStore(state => state.interactionMode);
   const startDrawing = useEditorStore(state => state.startDrawing);
   const finishDrawing = useEditorStore(state => state.finishDrawing);
   const drawingState = useEditorStore(state => state.drawingState);
+  const library = useEditorStore(state => state.library);
   const { screenToFlowPosition } = useReactFlow();
 
   const { minX, minY, maxX, maxY, width, height } = getComponentBounds(data.shapes, data.pins);
+
+  const componentDef = React.useMemo(() => {
+    if (data.componentId) {
+      return library.find((component) => component.id === data.componentId);
+    }
+    return library.find((component) => component.shapes === data.shapes && component.pins === data.pins);
+  }, [data.componentId, data.pins, data.shapes, library]);
+
+  const resolveShapeText = (text?: string) => {
+    if (!text) return { resolvedText: '', key: undefined as string | undefined };
+
+    const match = text.match(/{{\s*([^{}\s]+)\s*}}/);
+    if (!match) return { resolvedText: text, key: undefined as string | undefined };
+
+    const key = match[1];
+    const customValue = data.customValues?.[key];
+    const defaultValue = componentDef?.properties?.find((property) => property.id === key)?.default;
+    const value = customValue ?? defaultValue ?? '';
+
+    return {
+      resolvedText: text.replace(match[0], String(value)),
+      key,
+    };
+  };
 
   const onHandleClick = (e: React.MouseEvent, pinId: string) => {
     if (interactionMode !== 'draw') return;
@@ -46,8 +79,26 @@ export default function CustomNode({ id, data, selected }: NodeProps<{ shapes: C
               return <circle key={i} cx={shape.cx} cy={shape.cy} r={shape.r} fill={shape.fill} stroke={shape.stroke} strokeWidth={shape.strokeWidth} />;
             case 'path':
               return <path key={i} d={shape.d} fill={shape.fill} stroke={shape.stroke} strokeWidth={shape.strokeWidth} />;
-            case 'text':
-              return <text key={i} x={shape.x} y={shape.y} fill={shape.fill} fontSize={shape.fontSize} fontFamily={shape.fontFamily} fontWeight={shape.fontWeight} textAnchor={shape.textAnchor as any}>{shape.text}</text>;
+            case 'text': {
+              const { resolvedText, key } = resolveShapeText(shape.text);
+              const textTitle = key ? String(data.customValues?.[key] ?? componentDef?.properties?.find((property) => property.id === key)?.default ?? '') : shape.text;
+
+              return (
+                <text
+                  key={i}
+                  x={shape.x}
+                  y={shape.y}
+                  fill={shape.fill}
+                  fontSize={shape.fontSize}
+                  fontFamily={shape.fontFamily}
+                  fontWeight={shape.fontWeight}
+                  textAnchor={shape.textAnchor as any}
+                  title={textTitle}
+                >
+                  {resolvedText}
+                </text>
+              );
+            }
             default:
               return null;
           }
@@ -75,6 +126,7 @@ export default function CustomNode({ id, data, selected }: NodeProps<{ shapes: C
             id={pin.id}
             isConnectable={interactionMode !== 'draw'}
             onClick={(e) => onHandleClick(e, pin.id)}
+            title={`${pin.id} (${pin.signalType})`}
             style={{
               left: relativeX,
               top: relativeY,

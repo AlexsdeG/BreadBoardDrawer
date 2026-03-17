@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.17] - 2026-03-15
+- Added Component Builder mode: a dedicated ReactFlow canvas (`BuilderCanvas`) for placing and grid-snapping SVG rect/circle primitives and pins.
+- Added `BuilderSidebar` with Name, ID, Category inputs and Add Rect / Add Circle / Add Pin buttons; Save Component serialises the layout into a `HardwareComponent` and persists it to `localStorage`.
+- Added `addToLibrary` action to the store; library now initialises by merging `defaultParts` with any custom components stored under `customComponents` in `localStorage`.
+- Added "Component Builder" button to the editor toolbar that switches `appMode` to `'builder'`; "← Back to Editor" reverts and discards the in-progress layout.
+
 ## [0.0.16] - 2026-03-15
 - Fixed toolbar rotate controls visibility by tracking selected node ID from React Flow selection events.
 - Rotate-left and rotate-right buttons now reliably appear when exactly one component is selected.
