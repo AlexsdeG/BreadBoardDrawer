@@ -12,6 +12,14 @@ type CustomNodeData = {
   customValues?: Record<string, any>;
 };
 
+type TooltipState = {
+  x: number;
+  y: number;
+  title: string;
+  subtitle?: string;
+  lines?: string[];
+};
+
 export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeData>) {
   const interactionMode = useEditorStore(state => state.interactionMode);
   const startDrawing = useEditorStore(state => state.startDrawing);
@@ -19,6 +27,8 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
   const drawingState = useEditorStore(state => state.drawingState);
   const library = useEditorStore(state => state.library);
   const { screenToFlowPosition } = useReactFlow();
+  const [tooltip, setTooltip] = React.useState<TooltipState | null>(null);
+  const [hoveredPinId, setHoveredPinId] = React.useState<string | null>(null);
 
   const { minX, minY, maxX, maxY, width, height } = getComponentBounds(data.shapes, data.pins);
 
@@ -46,6 +56,38 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
     };
   };
 
+  const getComponentTooltipLines = React.useMemo(() => {
+    return (componentDef?.properties ?? [])
+      .map((property) => {
+        const value = data.customValues?.[property.id] ?? property.default;
+        if (value === undefined || value === null || value === '') return null;
+        return `${property.label}: ${String(value)}`;
+      })
+      .filter((line): line is string => Boolean(line));
+  }, [componentDef?.properties, data.customValues]);
+
+  const updateTooltipPosition = (event: React.MouseEvent, partial: Omit<TooltipState, 'x' | 'y'>) => {
+    setTooltip({
+      x: event.clientX + 14,
+      y: event.clientY + 14,
+      ...partial,
+    });
+  };
+
+  const showComponentTooltip = (event: React.MouseEvent) => {
+    if (hoveredPinId) return;
+    updateTooltipPosition(event, {
+      title: componentDef?.name ?? 'Component',
+      subtitle: componentDef?.category ?? 'custom',
+      lines: getComponentTooltipLines,
+    });
+  };
+
+  const hideTooltip = () => {
+    setTooltip(null);
+    setHoveredPinId(null);
+  };
+
   const onHandleClick = (e: React.MouseEvent, pinId: string) => {
     if (interactionMode !== 'draw') return;
     e.stopPropagation();
@@ -61,7 +103,7 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
 
   return (
     <div 
-      className={`relative ${selected ? 'ring-2 ring-blue-500' : ''}`} 
+      className={`relative ${selected && interactionMode === 'draw' ? 'ring-2 ring-blue-500' : ''}`} 
       style={{ 
         width, 
         height, 
@@ -69,6 +111,9 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
         transformOrigin: 'center center',
         transition: 'transform 0.2s ease-in-out'
       }}
+      onMouseEnter={showComponentTooltip}
+      onMouseMove={showComponentTooltip}
+      onMouseLeave={hideTooltip}
     >
       <svg width="100%" height="100%" viewBox={`${minX} ${minY} ${width} ${height}`}>
         {data.shapes?.map((shape, i) => {
@@ -97,7 +142,6 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
                   fontFamily={shape.fontFamily}
                   fontWeight={shape.fontWeight}
                   textAnchor={shape.textAnchor as any}
-                  title={textTitle}
                 >
                   {resolvedText}
                 </text>
@@ -128,9 +172,28 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
             type={pin.type === 'input' ? 'target' : 'source'}
             position={pos}
             id={pin.id}
-            isConnectable={interactionMode !== 'draw'}
+            isConnectable={interactionMode === 'draw'}
             onClick={(e) => onHandleClick(e, pin.id)}
-            title={`${pin.id} (${pin.signalType})`}
+            onMouseEnter={(event) => {
+              setHoveredPinId(pin.id);
+              updateTooltipPosition(event, {
+                title: pin.id,
+                subtitle: `${pin.signalType} • ${pin.type}`,
+                lines: componentDef ? [`${componentDef.name}`] : undefined,
+              });
+            }}
+            onMouseMove={(event) => {
+              setHoveredPinId(pin.id);
+              updateTooltipPosition(event, {
+                title: pin.id,
+                subtitle: `${pin.signalType} • ${pin.type}`,
+                lines: componentDef ? [`${componentDef.name}`] : undefined,
+              });
+            }}
+            onMouseLeave={(event) => {
+              setHoveredPinId(null);
+              showComponentTooltip(event);
+            }}
             style={{
               left: relativeX,
               top: relativeY,
@@ -145,6 +208,24 @@ export default function CustomNode({ id, data, selected }: NodeProps<CustomNodeD
           />
         );
       })}
+      {tooltip ? (
+        <div
+          className="pointer-events-none fixed z-[2500] min-w-[180px] rounded-lg border border-slate-200 bg-white/95 px-3 py-2 shadow-xl backdrop-blur-sm"
+          style={{ left: tooltip.x, top: tooltip.y }}
+        >
+          <div className="text-sm font-semibold text-slate-800">{tooltip.title}</div>
+          {tooltip.subtitle ? (
+            <div className="text-xs capitalize text-slate-500">{tooltip.subtitle}</div>
+          ) : null}
+          {tooltip.lines?.length ? (
+            <div className="mt-1 space-y-0.5 text-xs text-slate-600">
+              {tooltip.lines.map((line) => (
+                <div key={line}>{line}</div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

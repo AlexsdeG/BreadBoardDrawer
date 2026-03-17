@@ -105,6 +105,7 @@ function EditorCanvasInner() {
       <ComponentModal />
       <DrawingOverlay mousePos={mousePos} />
       <ReactFlow
+        className={`editor-flow mode-${interactionMode}`}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -117,9 +118,10 @@ function EditorCanvasInner() {
         onSelectionChange={onSelectionChange}
         defaultEdgeOptions={{ type: 'advancedEdge' }}
         connectionMode={ConnectionMode.Loose}
-        nodesDraggable={interactionMode === 'select'}
-        nodesConnectable={interactionMode === 'select'}
-        elementsSelectable={interactionMode === 'select'}
+        nodesDraggable={interactionMode === 'draw'}
+        nodesConnectable={interactionMode === 'draw'}
+        elementsSelectable={interactionMode === 'draw'}
+        selectionOnDrag={interactionMode === 'draw'}
         snapToGrid={drawSettings.snapToGrid}
         snapGrid={[20, 20]}
         fitView

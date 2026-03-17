@@ -32,7 +32,7 @@ export type TextNodeData = {
 
 export type PinNodeData = {
   pinId: string;
-  signalType: 'digital' | 'analog' | 'pwm' | 'power' | 'gnd' | 'default';
+  signalType: 'digital' | 'analog' | 'pwm' | 'power' | 'gnd' | '5v' | '3v3' | 'default';
 };
 
 const SIGNAL_COLORS: Record<string, string> = {
@@ -40,6 +40,8 @@ const SIGNAL_COLORS: Record<string, string> = {
   analog: '#f59e0b',
   pwm: '#8b5cf6',
   power: '#ef4444',
+  '5v': '#ef4444',
+  '3v3': '#f97316',
   gnd: '#374151',
   default: '#6b7280',
 };

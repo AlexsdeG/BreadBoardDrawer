@@ -9,7 +9,7 @@ type SignalType = PinNodeData['signalType'];
 type PrimitiveType = PrimitiveNodeData['primitiveType'];
 
 const CATEGORIES: Category[] = ['passive', 'diode-led', 'ic', 'transistor', 'switch', 'power', 'microcontroller'];
-const SIGNAL_TYPES: SignalType[] = ['default', 'digital', 'analog', 'pwm', 'power', 'gnd'];
+const SIGNAL_TYPES: SignalType[] = ['default', 'digital', 'analog', 'pwm', 'power', '5v', '3v3', 'gnd'];
 const PRIMITIVE_TYPES: PrimitiveType[] = ['rect', 'rounded-rect', 'circle', 'ellipse', 'triangle', 'diamond'];
 
 const CLS = {

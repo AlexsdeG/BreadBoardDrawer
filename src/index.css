@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+.editor-flow.mode-select .react-flow__node.selected,
+.editor-flow.mode-select .react-flow__node:focus,
+.editor-flow.mode-select .react-flow__node:focus-visible {
+	box-shadow: none !important;
+	outline: none !important;
+}
+
+.editor-flow.mode-select .react-flow__nodesselection,
+.editor-flow.mode-select .react-flow__nodesselection-rect {
+	display: none !important;
+}

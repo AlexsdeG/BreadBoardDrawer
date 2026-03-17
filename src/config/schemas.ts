@@ -37,7 +37,7 @@ export const PinSchema = z.object({
   x: z.number(),
   y: z.number(),
   type: z.enum(['input', 'output', 'inout', 'any']).default('any'),
-  signalType: z.enum(['digital', 'analog', 'pwm', 'power', 'gnd', 'default']).default('default'),
+  signalType: z.enum(['digital', 'analog', 'pwm', 'power', 'gnd', '5v', '3v3', 'default']).default('default'),
 });
 
 export const ComponentSchema = z.object({
